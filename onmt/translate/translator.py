@@ -344,6 +344,7 @@ class Translator(object):
         counter = count(1)
         pred_score_total, pred_words_total = 0, 0
         gold_score_total, gold_words_total = 0, 0
+        pred_acc_total, pred_sents_total = 0, 0
 
         all_scores = []
         all_predictions = []
@@ -381,6 +382,8 @@ class Translator(object):
                 if self.verbose:
                     sent_number = next(counter)
                     output = trans.log(sent_number)
+                    pred_acc_total += trans.acc(sent_number)
+                    pred_sents_total += 1
                     if self.logger:
                         self.logger.info(output)
                     else:
@@ -422,6 +425,8 @@ class Translator(object):
             if tgt is not None:
                 msg = self._report_score('GOLD', gold_score_total,
                                          gold_words_total)
+                self._log(msg)
+                msg = 'PRED ACC : {} ({}/{})'.format(pred_acc_total/pred_sents_total, pred_acc_total, pred_sents_total)
                 self._log(msg)
 
         if self.report_time:

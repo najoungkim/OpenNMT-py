@@ -175,3 +175,14 @@ class Translation(object):
                 msg.append("[{:.4f}] {}\n".format(score, sent))
 
         return "".join(msg)
+
+    def acc(self, sent_number):
+        best_pred = self.pred_sents[0]
+        pred_sent = ' '.join(best_pred)
+        tgt_sent = ' '.join(self.gold_sent)
+        accurate = 0
+        if pred_sent == tgt_sent:
+            accurate = 1
+
+        return accurate
+

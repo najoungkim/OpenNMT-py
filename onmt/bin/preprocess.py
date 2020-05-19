@@ -119,7 +119,7 @@ def maybe_load_vocab(corpus_type, counters, opt):
             try:
                 logger.info("Using existing vocabulary...")
                 existing_fields = torch.load(opt.src_vocab)
-            except torch.serialization.pickle.UnpicklingError:
+            except (torch.serialization.pickle.UnpicklingError, ModuleNotFoundError):
                 logger.info("Building vocab from text file...")
                 src_vocab, src_vocab_size = _load_vocab(
                     opt.src_vocab, "src", counters,

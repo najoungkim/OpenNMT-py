@@ -54,7 +54,7 @@ def build_trainer(opt, device_id, model, fields, optim, model_saver=None):
     gpu_verbose_level = opt.gpu_verbose_level
 
     earlystopper = onmt.utils.EarlyStopping(
-        opt.early_stopping, scorers=onmt.utils.scorers_from_opts(opt)) \
+        opt.early_stopping, scorers=onmt.utils.scorers_from_opts(opt), base_path=opt.save_model) \
         if opt.early_stopping > 0 else None
 
     source_noise = None

@@ -1,7 +1,7 @@
 
 from enum import Enum
 from onmt.utils.logging import logger
-
+from shutil import copyfile
 
 class PatienceEnum(Enum):
     IMPROVING = 0
@@ -44,6 +44,19 @@ class PPLScorer(Scorer):
     def _caller(self, stats):
         return stats.ppl()
 
+class LossScorer(Scorer):
+
+    def __init__(self):
+        super(LossScorer, self).__init__(float("inf"), "loss")
+
+    def is_improving(self, stats):
+        return stats.xent() < self.best_score
+
+    def is_decreasing(self, stats):
+        return stats.xent() > self.best_score
+
+    def _caller(self, stats):
+        return stats.xent()
 
 class AccuracyScorer(Scorer):
 
@@ -65,7 +78,8 @@ DEFAULT_SCORERS = [PPLScorer(), AccuracyScorer()]
 
 SCORER_BUILDER = {
     "ppl": PPLScorer,
-    "accuracy": AccuracyScorer
+    "accuracy": AccuracyScorer,
+    "loss": LossScorer
 }
 
 
@@ -83,7 +97,7 @@ def scorers_from_opts(opt):
 
 class EarlyStopping(object):
 
-    def __init__(self, tolerance, scorers=DEFAULT_SCORERS):
+    def __init__(self, tolerance, scorers=DEFAULT_SCORERS, base_path=""):
         """
             Callable class to keep track of early stopping.
 
@@ -98,6 +112,7 @@ class EarlyStopping(object):
         self.early_stopping_scorers = scorers
         self.status = PatienceEnum.IMPROVING
         self.current_step_best = 0
+        self.base_path = base_path
 
     def __call__(self, valid_stats, step):
         """
@@ -181,6 +196,9 @@ class EarlyStopping(object):
     def _log_best_step(self):
         logger.info("Best model found at step {}".format(
             self.current_step_best))
+        best_path = "{}_step_{}.pt".format(self.base_path, self.current_step_best)
+        new_path = "{}_best.pt".format(self.base_path)
+        copyfile(best_path, new_path)
 
     def _decreasing_or_stopped_status_update(self, tolerance):
         self.status = PatienceEnum.DECREASING \

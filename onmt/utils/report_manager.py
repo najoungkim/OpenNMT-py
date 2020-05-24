@@ -137,7 +137,7 @@ class ReportMgr(ReportMgrBase):
         See base class method `ReportMgrBase.report_step`.
         """
         if train_stats is not None:
-            self.log('Train perplexity: %g' % train_stats.ppl())
+            self.log('Train xent: %g' % train_stats.xent())
             self.log('Train accuracy: %g' % train_stats.accuracy())
 
             self.maybe_log_tensorboard(train_stats,
@@ -146,7 +146,7 @@ class ReportMgr(ReportMgrBase):
                                        step)
 
         if valid_stats is not None:
-            self.log('Validation perplexity: %g' % valid_stats.ppl())
+            self.log('Validation xent: %g' % valid_stats.xent())
             self.log('Validation accuracy: %g' % valid_stats.accuracy())
 
             self.maybe_log_tensorboard(valid_stats,

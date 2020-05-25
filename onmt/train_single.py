@@ -89,6 +89,7 @@ def main(opt, device_id, batch_queue=None, semaphore=None):
     logger.info('encoder: %d' % enc)
     logger.info('decoder: %d' % dec)
     logger.info('* number of parameters: %d' % n_params)
+    logger.info('args: {}'.format(opt))
     _check_save_model_path(opt)
 
     # Build optimizer.
